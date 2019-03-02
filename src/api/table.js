@@ -39,3 +39,24 @@ export function activateNode(node_id, active) {
       })
   })
 }
+
+export function deleteNode(node_id) {
+  var url = new URL(process.env.BASE_API + 'nodes')
+  const params = { node_id }
+  Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
+  return new Promise((resolve, reject) => {
+    fetch(url, {
+      method: 'delete',
+      headers: {
+        'Authentication': getToken()
+      }
+    })
+      .then(data => data.json())
+      .then(data => {
+        resolve(data.message)
+      })
+      .catch(e => {
+        reject(e.message)
+      })
+  })
+}

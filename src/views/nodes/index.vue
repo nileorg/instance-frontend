@@ -9,7 +9,7 @@
       highlight-current-row>
       <el-table-column align="center" label="ID" width="95">
         <template slot-scope="scope">
-          {{ scope.$index }}
+          {{ scope.row.node_id }}
         </template>
       </el-table-column>
       <el-table-column label="Information" width="200">
@@ -32,12 +32,17 @@
           <el-tag :type="scope.row.active | statusFilter" style="cursor: pointer;" @click.native.prevent="activate(scope.row.node_id, scope.row.active === 1 ? 0 : 1)">{{ scope.row.active === 1 ? 'Active' : 'Not active' }}</el-tag>
         </template>
       </el-table-column>
+      <el-table-column class-name="delete-col" label="Delete" width="110" align="center">
+        <template slot-scope="scope">
+          <el-button type="danger" @click.native.prevent="deleteNode(scope.row.node_id)">Delete</el-button>
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
 
 <script>
-import { getList, activateNode } from '@/api/table'
+import { getList, activateNode, deleteNode } from '@/api/table'
 
 export default {
   filters: {
@@ -69,6 +74,11 @@ export default {
     activate(node_id, active) {
       activateNode(node_id, active).then(response => {
         this.list.find(v => v.node_id === node_id).active = active
+      })
+    },
+    deleteNode(node_id) {
+      deleteNode(node_id).then(response => {
+        this.list = this.list.filter(v => v.node_id !== node_id)
       })
     }
   }
