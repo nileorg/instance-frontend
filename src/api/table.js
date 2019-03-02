@@ -60,3 +60,22 @@ export function deleteNode(node_id) {
       })
   })
 }
+
+export function publish() {
+  var url = new URL(process.env.BASE_API + 'publish')
+  return new Promise((resolve, reject) => {
+    fetch(url, {
+      method: 'post',
+      headers: {
+        'Authentication': getToken()
+      }
+    })
+      .then(data => data.json())
+      .then(data => {
+        resolve(data)
+      })
+      .catch(e => {
+        reject(e.message)
+      })
+  })
+}

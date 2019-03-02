@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <el-button style="margin-bottom: 20px" type="primary" @click.native.prevent="publish()">Publish nodes list on IPFS</el-button>
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -42,7 +43,8 @@
 </template>
 
 <script>
-import { getList, activateNode, deleteNode } from '@/api/table'
+import { getList, activateNode, deleteNode, publish } from '@/api/table'
+import { Message } from 'element-ui'
 
 export default {
   filters: {
@@ -79,6 +81,11 @@ export default {
     deleteNode(node_id) {
       deleteNode(node_id).then(response => {
         this.list = this.list.filter(v => v.node_id !== node_id)
+      })
+    },
+    publish() {
+      publish().then(response => {
+        Message.success(response.message + ' The new hash is: ' + response.hash)
       })
     }
   }
