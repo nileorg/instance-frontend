@@ -12,30 +12,24 @@
           {{ scope.$index }}
         </template>
       </el-table-column>
-      <el-table-column label="Title">
+      <el-table-column label="Information" width="200">
         <template slot-scope="scope">
-          {{ scope.row.title }}
+          {{ scope.row.information }}
         </template>
       </el-table-column>
-      <el-table-column label="Author" width="110" align="center">
+      <el-table-column label="Components" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
+          <span>{{ scope.row.components }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Pageviews" width="110" align="center">
+      <el-table-column label="resource" align="center">
         <template slot-scope="scope">
-          {{ scope.row.pageviews }}
+          {{ scope.row.resource }}
         </template>
       </el-table-column>
       <el-table-column class-name="status-col" label="Status" width="110" align="center">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" prop="created_at" label="Display_time" width="200">
-        <template slot-scope="scope">
-          <i class="el-icon-time"/>
-          <span>{{ scope.row.display_time }}</span>
+          <el-tag :type="scope.row.active | statusFilter" style="cursor: pointer;" @click.native.prevent="activate(scope.row.node_id, scope.row.active === 1 ? 0 : 1)">{{ scope.row.active === 1 ? 'Active' : 'Not active' }}</el-tag>
         </template>
       </el-table-column>
     </el-table>
@@ -43,15 +37,14 @@
 </template>
 
 <script>
-import { getList } from '@/api/table'
+import { getList, activateNode } from '@/api/table'
 
 export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
+        1: 'success',
+        0: 'danger'
       }
       return statusMap[status]
     }
@@ -69,8 +62,13 @@ export default {
     fetchData() {
       this.listLoading = true
       getList(this.listQuery).then(response => {
-        this.list = response.data.items
+        this.list = response
         this.listLoading = false
+      })
+    },
+    activate(node_id, active) {
+      activateNode(node_id, active).then(response => {
+        this.list.find(v => v.node_id === node_id).active = active
       })
     }
   }
