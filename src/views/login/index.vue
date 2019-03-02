@@ -37,17 +37,12 @@
 </template>
 
 <script>
-import { isvalidUsername } from '@/utils/validate'
-
+import { Message } from 'element-ui'
 export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!isvalidUsername(value)) {
-        callback(new Error('Please enter the correct username'))
-      } else {
-        callback()
-      }
+      callback()
     }
     const validatePass = (rule, value, callback) => {
       if (value.length < 5) {
@@ -58,8 +53,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: 'admin'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -93,7 +88,8 @@ export default {
           this.$store.dispatch('Login', this.loginForm).then(() => {
             this.loading = false
             this.$router.push({ path: this.redirect || '/' })
-          }).catch(() => {
+          }).catch((e) => {
+            Message.error('Login failed')
             this.loading = false
           })
         } else {

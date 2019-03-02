@@ -1,27 +1,25 @@
-import request from '@/utils/request'
-
 export function login(username, password) {
-  return request({
-    url: '/user/login',
-    method: 'post',
-    data: {
-      username,
-      password
-    }
-  })
-}
-
-export function getInfo(token) {
-  return request({
-    url: '/user/info',
-    method: 'get',
-    params: { token }
+  return new Promise((resolve, reject) => {
+    const loginParams = new URLSearchParams()
+    loginParams.set('username', username)
+    loginParams.set('password', password)
+    fetch(process.env.BASE_API + 'login', {
+      method: 'post',
+      body: loginParams
+    })
+      .then(data => data.json())
+      .then(data => {
+        if (data.success) {
+          resolve(data)
+        } else {
+          reject('Wrong username')
+        }
+      })
   })
 }
 
 export function logout() {
-  return request({
-    url: '/user/logout',
-    method: 'post'
+  return new Promise(resolve => {
+    resolve(true)
   })
 }
