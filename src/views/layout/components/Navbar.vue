@@ -14,7 +14,7 @@
           </el-dropdown-item>
         </router-link>
         <el-dropdown-item divided>
-          <span style="display:block;" @click="logout">LogOut</span>
+          <span style="display:block;" @click="logout">Logout</span>
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>

@@ -1,6 +1,6 @@
 import { login } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-
+import * as jwtDecode from 'jwt-decode'
 const user = {
   state: {
     token: getToken(),
@@ -12,8 +12,8 @@ const user = {
     SET_TOKEN: (state, token) => {
       state.token = token
     },
-    SET_USERNAME: (state, username) => {
-      state.username = username
+    SET_NAME: (state, name) => {
+      state.name = name
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
@@ -27,7 +27,6 @@ const user = {
         login(username, userInfo.password).then(response => {
           const data = response
           setToken(data.token)
-          commit('SET_ROLES', ['admin'])
           commit('SET_TOKEN', data.token)
           resolve()
         }).catch(error => {
@@ -36,7 +35,11 @@ const user = {
       })
     },
     GetInfo({ commit, state }) {
+      const userInfo = jwtDecode(getToken())
       return new Promise(resolve => {
+        if (userInfo) {
+          commit('SET_NAME', userInfo.username)
+        }
         commit('SET_ROLES', ['admin'])
         resolve()
       })
@@ -45,6 +48,7 @@ const user = {
       return new Promise((resolve, reject) => {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
+        commit('SET_NAME', '')
         removeToken()
         resolve()
       })
